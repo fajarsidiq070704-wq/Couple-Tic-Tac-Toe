@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Couple Tic Tac Toe Online</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 95, 158, 0.35), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(130, 80, 255, 0.35), transparent 35%),
+        linear-gradient(135deg, #150816, #371529);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1000px;
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 20px 70px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .logo {
+      width: 58px;
+      height: 58px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #ff5f9e, #9b5cff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      box-shadow: 0 8px 25px rgba(255, 95, 158, 0.4);
+    }
+
+    h1 {
+      font-size: 30px;
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      color: #e8bfd1;
+      font-size: 15px;
+      line-height: 1.4;
+      margin-top: 5px;
+    }
+
+    label {
+      display: block;
+      margin: 13px 0 6px;
+      color: #e8bfd1;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 15px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      outline: none;
+      background: rgba(255, 255, 255, 0.13);
+      color: white;
+      font-size: 16px;
+    }
+
+    input::placeholder {
+      color: #d9a8bd;
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    button {
+      border: none;
+      outline: none;
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.18s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .primary {
+      background: linear-gradient(135deg, #ff5f9e, #ff9ac7);
+      color: white;
+    }
+
+    .secondary {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .danger {
+      background: rgba(255, 66, 109, 0.18);
+      color: #ffd8e1;
+      border: 1px solid rgba(255, 66, 109, 0.4);
+    }
+
+    .status {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.13);
+      color: #ffe6f0;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .room-box {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 20px;
+      border: 1px dashed rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .room-box.show {
+      display: block;
+    }
+
+    .room-code {
+      margin: 8px 0;
+      font-size: 34px;
+      letter-spacing: 5px;
+      font-weight: 900;
+      text-shadow: 0 0 20px rgba(255, 95, 158, 0.65);
+    }
+
+    .room-link {
+      color: #e8bfd1;
+      font-size: 13px;
+      word-break: break-all;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .player {
+      padding: 14px;
+      min-height: 88px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .player.active {
+      border-color: #ff9ac7;
+      background: rgba(255, 95, 158, 0.18);
+      box-shadow: 0 0 0 2px rgba(255, 95, 158, 0.18);
+    }
+
+    .player small {
+      color: #e8bfd1;
+      font-size: 12px;
+    }
+
+    .player-name {
+      margin-top: 5px;
+      font-size: 18px;
+      font-weight: bold;
+      word-break: break-word;
+    }
+
+    .mark {
+      margin-top: 4px;
+      font-size: 28px;
+      font-weight: 900;
+      color: #ff9ac7;
+    }
+
+    .vs {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.14);
+      color: #e8bfd1;
+      font-weight: 900;
+    }
+
+    .message {
+      text-align: center;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.13);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      font-weight: bold;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .board {
+      max-width: 470px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .cell {
+      aspect-ratio: 1 / 1;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: white;
+      font-size: clamp(44px, 8vw, 76px);
+      font-weight: 900;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .cell.x {
+      color: #ff9ac7;
+      text-shadow: 0 0 18px rgba(255, 95, 158, 0.6);
+    }
+
+    .cell.o {
+      color: #b99cff;
+      text-shadow: 0 0 18px rgba(155, 92, 255, 0.6);
+    }
+
+    .cell.win {
+      border-color: #43e69b;
+      background: rgba(67, 230, 155, 0.18);
+      box-shadow: 0 0 22px rgba(67, 230, 155, 0.28);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .note {
+      margin-top: 14px;
+      color: #e8bfd1;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.78);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.25s;
+      z-index: 999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      bottom: 32px;
+    }
+
+    @media (max-width: 850px) {
+      body {
+        align-items: flex-start;
+      }
+
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .btn-row,
+      .actions,
+      .scoreboard {
+        grid-template-columns: 1fr;
+      }
+
+      .vs {
+        margin: auto;
+      }
+
+      .room-code {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <section class="card">
+      <div class="brand">
+        <div class="logo">💕</div>
+        <div>
+          <h1>Couple Tic Tac Toe</h1>
+          <p class="subtitle">Game online sederhana buat main bareng ayang walau lagi LDR.</p>
+        </div>
+      </div>
+
+      <label>Nama kamu</label>
+      <input id="nameInput" type="text" placeholder="Contoh: Fajar" maxlength="18" />
+
+      <label>Kode room</label>
+      <input id="roomInput" type="text" placeholder="Isi kalau mau join room" maxlength="8" />
+
+      <div class="btn-row">
+        <button class="primary" id="createBtn">Buat Room</button>
+        <button class="secondary" id="joinBtn">Join Room</button>
+      </div>
+
+      <div class="room-box" id="roomBox">
+        <p style="color:#e8bfd1;">Kode room:</p>
+        <div class="room-code" id="roomCodeText">------</div>
+        <p class="room-link" id="roomLinkText"></p>
+
+        <div class="btn-row">
+          <button class="primary" id="copyLinkBtn">Copy Link</button>
+          <button class="secondary" id="copyCodeBtn">Copy Kode</button>
+        </div>
+      </div>
+
+      <div class="status" id="statusText">
+        Isi nama kamu, lalu klik Buat Room. Kirim link ke ayang agar bisa main bareng.
+      </div>
+
+      <p class="note">
+        Pembuat room jadi simbol <b>X</b>, yang join jadi simbol <b>O</b>.
+      </p>
+    </section>
+
+    <section class="card">
+      <div class="scoreboard">
+        <div class="player" id="playerXBox">
+          <small>Player X</small>
+          <div class="player-name" id="playerXName">Menunggu...</div>
+          <div class="mark">X</div>
+        </div>
+
+        <div class="vs">VS</div>
+
+        <div class="player" id="playerOBox">
+          <small>Player O</small>
+          <div class="player-name" id="playerOName">Menunggu...</div>
+          <div class="mark">O</div>
+        </div>
+      </div>
+
+      <div class="message" id="gameMessage">
+        Belum masuk room.
+      </div>
+
+      <div class="board">
+        <button class="cell" data-index="0"></button>
+        <button class="cell" data-index="1"></button>
+        <button class="cell" data-index="2"></button>
+        <button class="cell" data-index="3"></button>
+        <button class="cell" data-index="4"></button>
+        <button class="cell" data-index="5"></button>
+        <button class="cell" data-index="6"></button>
+        <button class="cell" data-index="7"></button>
+        <button class="cell" data-index="8"></button>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="rematchBtn" disabled>Main Lagi</button>
+        <button class="danger" id="leaveBtn" disabled>Keluar Room</button>
+      </div>
+
+      <p class="note">
+        Yang kalah wajib bilang “aku sayang kamu” duluan. 😄
+      </p>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">Berhasil</div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+
+  <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAHRnb0QWDY-LvxP7s-BfLdqnV__aJ-9X0",
+    authDomain: "couple-tictactoe-6ce05.firebaseapp.com",
+    databaseURL: "https://couple-tictactoe-6ce05-default-rtdb.firebaseio.com",
+    projectId: "couple-tictactoe-6ce05",
+    storageBucket: "couple-tictactoe-6ce05.firebasestorage.app",
+    messagingSenderId: "1085488792960",
+    appId: "1:1085488792960:web:752c8ca803742b086bed65"
+  };
+
+
+    const nameInput = document.getElementById("nameInput");
+    const roomInput = document.getElementById("roomInput");
+    const createBtn = document.getElementById("createBtn");
+    const joinBtn = document.getElementById("joinBtn");
+    const copyLinkBtn = document.getElementById("copyLinkBtn");
+    const copyCodeBtn = document.getElementById("copyCodeBtn");
+    const rematchBtn = document.getElementById("rematchBtn");
+    const leaveBtn = document.getElementById("leaveBtn");
+    const roomBox = document.getElementById("roomBox");
+    const roomCodeText = document.getElementById("roomCodeText");
+    const roomLinkText = document.getElementById("roomLinkText");
+    const statusText = document.getElementById("statusText");
+    const gameMessage = document.getElementById("gameMessage");
+    const playerXBox = document.getElementById("playerXBox");
+    const playerOBox = document.getElementById("playerOBox");
+    const playerXName = document.getElementById("playerXName");
+    const playerOName = document.getElementById("playerOName");
+    const cells = Array.from(document.querySelectorAll(".cell"));
+    const toast = document.getElementById("toast");
+
+    let db = null;
+    let uid = "";
+    let currentRoom = "";
+    let myRole = "";
+    let roomData = null;
+    let roomListenerRef = null;
+
+    const EMPTY_BOARD = ["", "", "", "", "", "", "", "", ""];
+
+    const WIN_LINES = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+
+    const savedName = localStorage.getItem("couple_name");
+    if (savedName) {
+      nameInput.value = savedName;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const roomFromUrl = params.get("room");
+    if (roomFromUrl) {
+      roomInput.value = cleanCode(roomFromUrl);
+    }
+
+    createBtn.disabled = true;
+    joinBtn.disabled = true;
+
+    initFirebase();
+
+    async function initFirebase() {
+      try {
+        if (
+          firebaseConfig.apiKey.includes("ISI_") ||
+          firebaseConfig.databaseURL.includes("ISI_")
+        ) {
+          setStatus("Firebase config belum diisi. Ganti dulu bagian firebaseConfig di kode.");
+          gameMessage.textContent = "Firebase belum disetting.";
+          return;
+        }
+
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.database();
+
+        setStatus("Menghubungkan ke server game...");
+
+        const result = await firebase.auth().signInAnonymously();
+        uid = result.user.uid;
+
+        createBtn.disabled = false;
+        joinBtn.disabled = false;
+        setStatus("Online. Silakan buat room atau join room.");
+
+        if (roomFromUrl && nameInput.value.trim()) {
+          setTimeout(joinRoom, 500);
+        }
+      } catch (error) {
+        console.error(error);
+        setStatus("Gagal terhubung Firebase. Cek config, databaseURL, Authentication Anonymous, dan Rules.");
+        gameMessage.textContent = "Koneksi gagal.";
+      }
+    }
+
+    createBtn.addEventListener("click", createRoom);
+    joinBtn.addEventListener("click", joinRoom);
+    copyLinkBtn.addEventListener("click", copyRoomLink);
+    copyCodeBtn.addEventListener("click", copyRoomCode);
+    rematchBtn.addEventListener("click", rematch);
+    leaveBtn.addEventListener("click", leaveRoom);
+
+    nameInput.addEventListener("input", function () {
+      localStorage.setItem("couple_name", nameInput.value.trim());
+    });
+
+    roomInput.addEventListener("input", function () {
+      roomInput.value = cleanCode(roomInput.value);
+    });
+
+    cells.forEach(function (cell) {
+      cell.addEventListener("click", function () {
+        makeMove(Number(cell.dataset.index));
+      });
+    });
+
+    async function createRoom() {
+      const name = getName();
+      if (!name) return;
+
+      const code = generateRoomCode();
+      const roomRef = db.ref("rooms/" + code);
+
+      const room = {
+        code: code,
+        status: "waiting",
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        updatedAt: firebase.database.ServerValue.TIMESTAMP,
+        board: EMPTY_BOARD.slice(),
+        turn: "x",
+        winner: "",
+        winLine: [],
+        rematch: {
+          x: false,
+          o: false
+        },
+        players: {
+          x: {
+            uid: uid,
+            name: name,
+            online: true,
+            joinedAt: firebase.database.ServerValue.TIMESTAMP
+          },
+          o: null
+        }
+      };
+
+      try {
+        await roomRef.set(room);
+        await enterRoom(code, "x");
+        showToast("Room dibuat");
+      } catch (error) {
+        console.error(error);
+        setStatus("Gagal membuat room.");
+      }
+    }
+
+    async function joinRoom() {
+      const name = getName();
+      if (!name) return;
+
+      const code = cleanCode(roomInput.value);
+
+      if (!code) {
+        setStatus("Isi kode room dulu.");
+        return;
+      }
+
+      const roomRef = db.ref("rooms/" + code);
+
+      try {
+        const snapshot = await roomRef.get();
+
+        if (!snapshot.exists()) {
+          setStatus("Room tidak ditemukan. Cek lagi kode dari ayang.");
+          return;
+        }
+
+        const room = snapshot.val();
+        let role = "";
+
+        if (room.players && room.players.x && room.players.x.uid === uid) {
+          role = "x";
+        } else if (room.players && room.players.o && room.players.o.uid === uid) {
+          role = "o";
+        } else if (!room.players || !room.players.o) {
+          role = "o";
+
+          await roomRef.update({
+            "players/o": {
+              uid: uid,
+              name: name,
+              online: true,
+              joinedAt: firebase.database.ServerValue.TIMESTAMP
+            },
+            status: "playing",
+            updatedAt: firebase.database.ServerValue.TIMESTAMP
+          });
+        } else {
+          setStatus("Room sudah penuh. Buat room baru.");
+          return;
+        }
+
+        await enterRoom(code, role);
+        showToast("Berhasil join");
+      } catch (error) {
+        console.error(error);
+        setStatus("Gagal join room.");
+      }
+    }
+
+    async function enterRoom(code, role) {
+      currentRoom = code;
+      myRole = role;
+
+      roomInput.value = code;
+      roomCodeText.textContent = code;
+      roomLinkText.textContent = getRoomLink(code);
+      roomBox.classList.add("show");
+
+      rematchBtn.disabled = false;
+      leaveBtn.disabled = false;
+
+      window.history.replaceState({}, "", "?room=" + code);
+
+      const onlineRef = db.ref("rooms/" + code + "/players/" + role + "/online");
+      await onlineRef.set(true);
+      onlineRef.onDisconnect().set(false);
+
+      if (roomListenerRef) {
+        roomListenerRef.off();
+      }
+
+      roomListenerRef = db.ref("rooms/" + code);
+
+      roomListenerRef.on("value", function (snapshot) {
+        if (!snapshot.exists()) {
+          resetRoom("Room sudah tidak tersedia.");
+          return;
+        }
+
+        roomData = snapshot.val();
+        render(roomData);
+      });
+
+      setStatus("Kamu masuk sebagai Player " + role.toUpperCase() + ".");
+    }
+
+    async function makeMove(index) {
+      if (!currentRoom || !myRole || !roomData) return;
+
+      if (roomData.status !== "playing") {
+        showToast("Tunggu ayang join dulu");
+        return;
+      }
+
+      if (roomData.winner) {
+        showToast("Game sudah selesai");
+        return;
+      }
+
+      if (roomData.turn !== myRole) {
+        showToast("Belum giliran kamu");
+        return;
+      }
+
+      if (roomData.board[index]) {
+        showToast("Kotak sudah terisi");
+        return;
+      }
+
+      const roomRef = db.ref("rooms/" + currentRoom);
+
+      try {
+        await roomRef.transaction(function (room) {
+          if (!room) return room;
+          if (room.status !== "playing") return room;
+          if (room.winner) return room;
+          if (room.turn !== myRole) return room;
+          if (room.board[index]) return room;
+
+          const board = room.board.slice();
+          board[index] = myRole;
+
+          const result = checkWinner(board);
+
+          room.board = board;
+          room.updatedAt = Date.now();
+          room.rematch = {
+            x: false,
+            o: false
+          };
+
+          if (result.winner) {
+            room.winner = result.winner;
+            room.winLine = result.line;
+            room.status = "finished";
+          } else {
+            room.turn = myRole === "x" ? "o" : "x";
+          }
+
+          return room;
+        });
+      } catch (error) {
+        console.error(error);
+        showToast("Gagal jalan");
+      }
+    }
+
+    async function rematch() {
+      if (!currentRoom || !myRole || !roomData) return;
+
+      const otherRole = myRole === "x" ? "o" : "x";
+      const otherReady = roomData.rematch && roomData.rematch[otherRole];
+
+      try {
+        await db.ref("rooms/" + currentRoom + "/rematch").update({
+          [myRole]: true
+        });
+
+        if (otherReady) {
+          await db.ref("rooms/" + currentRoom).update({
+            board: EMPTY_BOARD.slice(),
+            turn: "x",
+            winner: "",
+            winLine: [],
+            status: roomData.players && roomData.players.o ? "playing" : "waiting",
+            rematch: {
+              x: false,
+              o: false
+            },
+            updatedAt: firebase.database.ServerValue.TIMESTAMP
+          });
+        }
+
+        showToast("Menunggu ayang klik Main Lagi");
+      } catch (error) {
+        console.error(error);
+        showToast("Gagal main ulang");
+      }
+    }
+
+    async function leaveRoom() {
+      if (!currentRoom || !myRole) return;
+
+      try {
+        await db.ref("rooms/" + currentRoom + "/players/" + myRole).update({
+          online: false
+        });
+      } catch (error) {
+        console.error(error);
+      }
+
+      resetRoom("Kamu keluar dari room.");
+    }
+
+    function render(room) {
+      const x = room.players ? room.players.x : null;
+      const o = room.players ? room.players.o : null;
+
+      playerXName.textContent = x ? x.name + " " + (x.online ? "🟢" : "⚪") : "Menunggu...";
+      playerOName.textContent = o ? o.name + " " + (o.online ? "🟢" : "⚪") : "Menunggu...";
+
+      playerXBox.classList.toggle("active", room.turn === "x" && !room.winner);
+      playerOBox.classList.toggle("active", room.turn === "o" && !room.winner);
+
+      renderBoard(room.board || EMPTY_BOARD, room.winLine || []);
+
+      const myName = myRole === "x" ? (x && x.name) : (o && o.name);
+      const otherName = myRole === "x" ? (o && o.name) : (x && x.name);
+
+      if (!o) {
+        gameMessage.textContent = "Menunggu ayang join room...";
+        setStatus("Copy link room lalu kirim ke ayang.");
+        return;
+      }
+
+      if (room.winner === "draw") {
+        gameMessage.textContent = "Seri. Sama-sama kuat nih 😄";
+        setStatus("Game seri. Klik Main Lagi untuk rematch.");
+        return;
+      }
+
+      if (room.winner === myRole) {
+        gameMessage.textContent = "Kamu menang! " + (otherName || "Ayang") + " wajib bilang sayang duluan 💕";
+        setStatus("Kamu menang. Klik Main Lagi kalau mau ulang.");
+        return;
+      }
+
+      if (room.winner && room.winner !== myRole) {
+        gameMessage.textContent = (otherName || "Ayang") + " menang. Kamu wajib bilang aku sayang kamu 😄";
+        setStatus("Ayang menang. Klik Main Lagi kalau mau ulang.");
+        return;
+      }
+
+      if (room.turn === myRole) {
+        gameMessage.textContent = "Giliran kamu, " + (myName || "Sayang") + ".";
+        setStatus("Pilih satu kotak.");
+      } else {
+        gameMessage.textContent = "Menunggu giliran " + (otherName || "ayang") + "...";
+        setStatus("Sabar ya, tunggu ayang jalan.");
+      }
+    }
+
+    function renderBoard(board, winLine) {
+      cells.forEach(function (cell, index) {
+        const value = board[index] || "";
+
+        cell.textContent = value.toUpperCase();
+        cell.classList.toggle("x", value === "x");
+        cell.classList.toggle("o", value === "o");
+        cell.classList.toggle("win", winLine.includes(index));
+      });
+    }
+
+    function checkWinner(board) {
+      for (let i = 0; i < WIN_LINES.length; i++) {
+        const line = WIN_LINES[i];
+        const a = line[0];
+        const b = line[1];
+        const c = line[2];
+
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          return {
+            winner: board[a],
+            line: line
+          };
+        }
+      }
+
+      if (board.every(Boolean)) {
+        return {
+          winner: "draw",
+          line: []
+        };
+      }
+
+      return {
+        winner: "",
+        line: []
+      };
+    }
+
+    function resetRoom(message) {
+      if (roomListenerRef) {
+        roomListenerRef.off();
+        roomListenerRef = null;
+      }
+
+      currentRoom = "";
+      myRole = "";
+      roomData = null;
+
+      roomBox.classList.remove("show");
+      rematchBtn.disabled = true;
+      leaveBtn.disabled = true;
+
+      playerXName.textContent = "Menunggu...";
+      playerOName.textContent = "Menunggu...";
+      playerXBox.classList.remove("active");
+      playerOBox.classList.remove("active");
+
+      renderBoard(EMPTY_BOARD, []);
+
+      gameMessage.textContent = "Belum masuk room.";
+      setStatus(message);
+
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+
+    function getName() {
+      const name = nameInput.value.trim();
+
+      if (!name) {
+        setStatus("Isi nama kamu dulu.");
+        nameInput.focus();
+        return "";
+      }
+
+      localStorage.setItem("couple_name", name);
+      return name;
+    }
+
+    function generateRoomCode() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let code = "";
+
+      for (let i = 0; i < 6; i++) {
+        code += chars[Math.floor(Math.random() * chars.length)];
+      }
+
+      return code;
+    }
+
+    function cleanCode(value) {
+      return String(value || "")
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, "")
+        .slice(0, 8);
+    }
+
+    function getRoomLink(code) {
+      return window.location.origin + window.location.pathname + "?room=" + code;
+    }
+
+    async function copyRoomLink() {
+      if (!currentRoom) return;
+      await copyText(getRoomLink(currentRoom));
+      showToast("Link dicopy");
+    }
+
+    async function copyRoomCode() {
+      if (!currentRoom) return;
+      await copyText(currentRoom);
+      showToast("Kode dicopy");
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (error) {
+        const area = document.createElement("textarea");
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        area.remove();
+      }
+    }
+
+    function setStatus(message) {
+      statusText.textContent = message;
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      setTimeout(function () {
+        toast.classList.remove("show");
+      }, 1800);
+    }
+
+    renderBoard(EMPTY_BOARD, []);
+  </script>
+</body>
+</html>
